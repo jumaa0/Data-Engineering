@@ -15,19 +15,22 @@ Market of different countries​
 
 Prior to the Analysis a Transactional DB Model had to be created by taking Business Requirements and turning them into an ERD followed by the creation of the tables for the data. Then a DWH Model was created and ETL process was performed using SSIS to create a Single Point of Truth in the DWH.
 
-1- Database Design:
+##1- Database Design:
+ 
 -Designing an Entity-Relationship(ER) Diagram and mapping to model the database.
-
+ 
 ![ERD](https://github.com/jumaa0/TradeXpress-Business-Analysis/assets/126451388/3c8358eb-f4f2-470f-a26d-e1c64182f306)
 ![Schema](https://github.com/jumaa0/TradeXpress-Business-Analysis/assets/126451388/65fae6a7-3f50-4803-891e-985d6fe0bab4)
 -Implementing a database using Microsoft SQL Server.
 ![DB_Diagram](https://github.com/jumaa0/TradeXpress-Business-Analysis/assets/126451388/b553bd80-6b5e-43fb-8eea-126e451bfad5)
 
-2- Data Insertion:
+##2- Data Insertion: 
+
 
 -Transforming data using Microsoft Excel and inserting it into the database using import export wizard.
 
-3- ETL, Data Warehouse, and Modeling:
+ 
+##3- ETL, Data Warehouse, and Modeling:
 
 Dimension Tables:
  
@@ -41,7 +44,7 @@ Fact Table:
 Star Schema:
  ![Star_schema](https://github.com/jumaa0/TradeXpress-Business-Analysis/assets/126451388/481634b0-84f5-4f9f-80bb-3deb180cea0a)
 
-4- Analysis and Reporting:
+##4- Analysis and Reporting:
  
 Using Tableau public to analyze and reporting.
 This is an Overview of the Business and its performance

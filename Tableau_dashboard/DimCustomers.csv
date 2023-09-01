@@ -1,0 +1,92 @@
+customerID,companyName,contactName,contactTitle,TerritoryID
+ALFKI,StellarGoods,Maria Anders,Sales Representative,1
+ANATR,AlphaMart,Ana Trujillo,Owner,2
+ANTON,PrimeProvisions,Antonio Moreno,Owner,2
+CENTC,SolsticeSupplies,Francisco Chang,Marketing Manager,2
+PERIC,RadiantRetail,Guillermo Fern†ndez,Sales Representative,2
+AROUT,NexusMarket,Thomas Hardy,Sales Representative,3
+BSBEV,ElixirEssentials,Victoria Ashworth,Sales Representative,3
+CONSH,PhoenixPharma,Elizabeth Brown,Sales Representative,3
+EASTC,EnigmaElectronics,Ann Devon,Sales Agent,3
+NORTS,GoldenGlobe,Simon Crowther,Sales Associate,3
+BERGS,SwiftTrade,Christina Berglund,Order Administrator,4
+BLAUS,CrystalCove,Hanna Moos,Sales Representative,5
+BLONP,GoldenHarvest,FrÇdÇrique Citeaux,Marketing Manager,6
+BOLID,ExcelTech,Mart°n Sommer,Owner,7
+FISSA,MoonstoneMerchants,Diego Roel,Accounting Manager,7
+ROMEY,CharismaChoice,Alejandra Camino,Accounting Manager,7
+BONAP,SunflowerSales,Laurence Lebihan,Owner,8
+BOTTM,FusionWare,Elizabeth Lincoln,Accounting Manager,9
+CACTU,QuantumQuest,Patricio Simpson,Sales Agent,10
+OCEAN,TrendTrove,Yvonne Moncada,Sales Agent,10
+RANCH,PowerPalette,Sergio GutiÇrrez,Sales Representative,10
+CHOPS,HarmonyHaven,Yang Wang,Owner,11
+COMMI,InfinityInnovations,Pedro Afonso,Sales Associate,12
+FAMIA,ApexApparel,Aria Cruz,Marketing Assistant,12
+QUEEN,FreshFinds,L£cia Carvalho,Marketing Assistant,12
+DRACD,RadiantRetail,Sven Ottlieb,Order Administrator,13
+DUMON,ZenithZones,Janine Labrune,Owner,14
+FRANR,SilverSkySolutions,Carine Schmitt,Marketing Manager,14
+ERNSH,VividVentures,Roland Mendel,Sales Manager,15
+FOLIG,VortexValue,Martine RancÇ,Assistant Sales Agent,16
+FRANS,LibertyLuxuries,Paolo Accorti,Sales Representative,19
+FURIB,TerraTech,Lino Rodriguez,Sales Manager,20
+PRINI,BlissBoutique,Isabel de Castro,Sales Representative,20
+GALED,OpulentOutfitters,Eduardo Saavedra,Marketing Manager,21
+GODOS,CascadeCrafts,JosÇ Pedro Freyre,Sales Manager,22
+GOURL,VitalVogue,AndrÇ Fonseca,Sales Associate,23
+FOLKO,HorizonHouse,Maria Larsson,Owner,17
+GREAL,PearlPantry,Howard Snyder,Marketing Manager,24
+FRANK,AuroraAccessories,Peter Franken,Marketing Manager,
+GROSR,VentureVision,Manuel Pereira,Owner,25
+HANAR,StellarSolutions,Mario Pontes,Accounting Manager,26
+QUEDE,SmartSelections,Bernardo Batista,Accounting Manager,26
+RICAR,EpicElegance,Janete Limeira,Assistant Sales Agent,26
+HUNGC,DynamicDistributors,Yoshi Latimer,Sales Representative,28
+HUNGO,HarmonyHardware,Patricia McKenna,Sales Associate,29
+ISLAT,RoyalRaiments,Helen Bennett,Marketing Manager,30
+KOENE,FusionFoods,Philip Cramer,Sales Associate,31
+LACOR,ElectraEmporium,Daniel Tonini,Sales Representative,32
+LAMAI,SunburstSales,Annette Roulet,Sales Manager,33
+LAUGB,CelestialSweets,Yoshi Tannamuri,Marketing Assistant,34
+HILAA,EdenEssentials,Carlos Hern†ndez,Sales Representative,27
+LAZYK,QuantumQuench,John Steel,Marketing Manager,35
+LEHMS,UrbanUtopia,Renate Messner,Sales Representative,36
+LETSS,SolarisSupplies,Jaime Yorres,Owner,37
+LILAS,InfiniTech,Carlos Gonz†lez,Accounting Manager,38
+LINOD,ElementEmbrace,Felipe Izquierdo,Owner,39
+LONEP,CrescentCreations,Fran Wilson,Sales Manager,40
+MAGAA,SwiftMart,Giovanni Rovelli,Marketing Manager,41
+MAISD,StellarGoods,Catherine Dewey,Sales Agent,42
+MORGK,LuxeEssentials,Alexander Feuer,Marketing Assistant,44
+OLDWO,EliteEmporium,Rene Phillips,Sales Representative,45
+PARIS,PrimePicks,Marie Bertrand,Owner,47
+PICCO,Fusion Finds,Georg Pipps,Sales Manager,48
+QUICK,GlobalGems,Horst Kloss,Accounting Manager,49
+RATTC,BrilliantBuys,Paula Wilson,Assistant Sales Representative,50
+MEREP,QualityQuest,Jean Fresniäre,Marketing Assistant,43
+REGGC,StyleSavvy,Maurizio Moroni,Sales Associate,51
+SANTG,WhimsyWonder,Jonas Bergulfsen,Owner,53
+OTTIK,ValueVortex,Henriette Pfalzheim,Owner,46
+RICSU,Everlast Essentials,Michael Holz,Sales Manager,52
+SAVEA,VogueValley,Jose Pavarotti,Sales Representative,54
+SEVES,BeyondBasics,Hari Kumar,Sales Manager,3
+SIMOB,EnchantedEmporium,Jytte Petersen,Owner,55
+SPECD,SmartStyle,Dominique Perrier,Marketing Manager,47
+SPLIR,SparkleSphere,Art Braunschweiger,Sales Manager,56
+SUPRD,TreasureTroves,Pascale Cartrain,Accounting Manager,57
+THEBI,GrandeurGoods,Liz Nixon,Marketing Manager,40
+THECR,FashionFusion,Liu Wong,Marketing Assistant,58
+TOMSP,PrimePalace,Karin Josephs,Marketing Manager,59
+TORTU,SignatureSelections,Miguel Angel Paolino,Owner,2
+TRADH,VividVariety,Anabela Domingues,Sales Representative,12
+TRAIH,NobleNotions,Helvetius Nagy,Sales Associate,60
+VAFFE,ChicCraze,Palle Ibsen,Sales Manager,61
+VICTE,EliteEssence,Mary Saveley,Sales Agent,62
+VINET,OpulentOutfits,Paul Henriot,Accounting Manager,63
+WANDK,SupremeStock,Rita MÅller,Sales Representative,64
+WARTH,WonderWorld,Pirkko Koskitalo,Accounting Manager,65
+WELLI,GlamourGallery,Paula Parente,Sales Manager,66
+WHITC,DazzleDeals,Karl Jablonski,Owner,67
+WILMK,StyleSpark,Matti Karttunen,Owner/Marketing Assistant,68
+WOLZA,PreciousPicks,Zbyszek Piestrzeniewicz,Owner,69

@@ -1,0 +1,234 @@
+productID,Category,SubCategory,productName,unitPrice,discount
+1,Food,Beverages,Chai,18,15
+2,Food,Beverages,Chang,19,20
+3,Food,Seafood,Ikura,31,25
+4,Food,Dairy Products,Queso Cabrales,21,10
+5,Food,Dairy Products,Queso Manchego La Pastora,38,15
+6,Food,Seafood,Konbu,6,10
+7,Food,Seafood,Carnarvon Tigers,62.5,15
+8,Food,Grains & Cereals,Gustaf's Knackebröd,21,20
+9,Food,Grains & Cereals,Tunnbröd,9,25
+10,Food,Beverages,Guarana Fantastica,4.5,10
+11,Food,Seafood,Nord-Ost Matjeshering,25.89,5
+12,Food,Dairy Products,Gorgonzola Telino,12.5,10
+13,Food,Dairy Products,Mascarpone Fabioli,32,15
+14,Food,Dairy Products,Geitost,2.5,20
+15,Food,Beverages,Sasquatch Ale,14,25
+16,Food,Beverages,Steeleye Stout,18,5
+17,Food,Seafood,Inlagd Sill,19,10
+18,Food,Seafood,Gravad lax,26,15
+19,Food,Beverages,Côte de Blaye,263.5,20
+20,Food,Beverages,Chartreuse verte,18,25
+21,Food,Seafood,Boston Crab Meat,18.4,5
+22,Food,Seafood,Jack's New England Clam Chowder,9.65,10
+23,Food,Grains & Cereals,Singaporean Hokkien Fried Mee,14,10
+24,Food,Beverages,Ipoh Coffee,46,20
+25,Food,Seafood,Rogede sild,9.5,15
+26,Food,Seafood,Spegesild,12,25
+27,Food,Grains & Cereals,Filo Mix,7,5
+28,Food,Grains & Cereals,Gnocchi di nonna Alice,38,10
+29,Food,Grains & Cereals,Ravioli Angelo,19.5,15
+30,Food,Seafood,Escargots de Bourgogne,13.25,20
+31,Food,Dairy Products,Raclette Courdavault,55,25
+32,Food,Dairy Products,Camembert Pierrot,34,5
+33,Food,Grains & Cereals,Wimmers gute Semmelknödel,33.25,10
+34,Food,Beverages,Laughing Lumberjack Lager,14,15
+35,Food,Dairy Products,Gudbrandsdalsost,36,20
+36,Food,Beverages,Outback Lager,15,25
+37,Food,Dairy Products,Flotemysost,21.5,5
+38,Food,Dairy Products,Mozzarella di Giovanni,34.8,0
+39,Food,Seafood,Röd Kaviar,15,0
+40,Food,Beverages,Rhönbräu Klosterbier,7.75,30
+41,Food,Beverages,Lakkaliköri,18,5
+42,clothes,Shirts,Chemises à manches courtes à rayures,35.98,50
+43,clothes,Pyjama,Pyjama confortable en coton et lin,45.26,31
+44,clothes,T-Shirts,T-shirt décontracté en coton uni avec poche poitrine,25.99,62
+45,clothes,Shirts,Chemises à poches multicolores,33.94,50
+46,clothes,Shirts,Chemises Imprimées Branches Vintage,33.94,32
+47,clothes,T-Shirts,T-shirts graphiques Astronaute et Terre,29.99,67
+48,clothes,Shirts,Chemise à imprimé floral en porcelaine pour homme,37.71,50
+49,clothes,Shirts,Chemises 100% coton imprimées pour hommes,37.71,44
+50,clothes,Shirts,Chemises unie Striola Chest Pocket,28.28,42
+51,clothes,T-Shirts,T-shirt 100% coton à col en V de couleur unie,28.28,65
+52,clothes,Shirts,Chemise à col montant en lin respirant,33.99,50
+53,clothes,Pyjama,Ensembles de chemises en coton et lin,60.35,47
+54,clothes,Shirts,Coton Colorful Chemise à rayures,35.99,48
+55,clothes,Shirts,Chemises à manches courtes imprimées à l'huile florale vintage,28.28,30
+56,clothes,T-Shirts,Mens Sample Cartoon Cat Graphic Casual Cotton Short Sleeve T-Shirt,28.99,66
+57,clothes,Shirts,Chemise patchwork de couleur contrastée,33.94,47
+58,clothes,Shirts,Chemises imprimées de graffitis de dessin animé pour hommes,33.94,44
+59,clothes,Shirts,Chemise patchwork à rayures plantes et feuilles,33.94,47
+60,clothes,Shirts,Chemise patchwork à rayures de paysage,33.94,47
+61,clothes,Shirts,Chemise unie respirante légère,28.28,44
+62,clothes,Shirts,Chemise à col rabattu imprimé peinture chinoise,59.99,35
+63,clothes,Pyjama,Vêtement d'intérieur léger en lin de coton uni,52.81,47
+64,clothes,Shirts,Chemises rayées Classic pour hommes ,33.94,42
+65,clothes,Shirts,Chemises lâches à manches courtes style ethnique,42.99,51
+66,clothes,Shirts,Chemise d'impression dégradé de coton ,37.72,33
+67,clothes,T-Shirts,T-shirt décontracté à col rond en coton et lin 8 couleurs,28.28,47
+68,clothes,T-Shirts,T-shirts en coton brodé Little Cloud,33.94,41
+69,clothes,Shirts,Chemise patchwork à rayures fleuries et colorées,33.94,47
+70,clothes,T-Shirts,99% coton Fun Cartoon Monster Print T-shirts,28.28,33
+71,clothes,Shirts,Chemise 100% coton à double poche,37.72,47
+72,clothes,Shirts,Classic Chemise rayée à manches courtes,33.99,47
+73,clothes,Shirts,Chemises à fleurs ethniques pour hommes,37.71,42
+74,clothes,Shirts,Chemises à rayures color block,33.94,44
+75,clothes,Shirts,Chemise à patchwork de rayures de couleur 100% coton,33.94,47
+76,clothes,Shirts,Chemises en velours côtelé uni couleur unie pour hommes,41.49,31
+77,clothes,Shirts,Chemises amples à col montant rayé pour hommes,51.99,41
+78,clothes,T-Shirts,T-shirts imprimés graphiques Sun & Planet,28.99,52
+79,clothes,Shirts,Chemise à manches courtes imprimée fleurs,37.72,44
+80,clothes,Shirts,Chemise décontractée de couleur assortie asymétrique,33.94,47
+81,clothes,Shirts,Chemise respirante en lin et coton Colorful,42.99,44
+82,clothes,T-Shirts,T-shirt Eclipse 100% coton Moon,29.99,67
+83,clothes,Shirts,Chemises Patchwork Stripe Contrast Color,36.15,39
+84,clothes,Shirts,Chemise à ourlet incurvé à rayures et imprimé coco,33.94,47
+85,clothes,T-Shirts,T-shirt 100% coton imprimé Surf Avocat,28.28,47
+86,clothes,Suits,Deux Pièces Robe De Mariage D'affaires Blazer Costume & Pantalon,187.99,42
+87,clothes,Shirts,Colorful Chemise imprimée à rayures,37.72,47
+88,clothes,Shirts,Chemises de couleur unie en velours côtelé,39.99,50
+89,clothes,T-Shirts,T-shirt imprimé banane,28.99,48
+90,clothes,Shirts,Chemise 100% coton couleur unie avec boucle cachée,37.72,47
+91,clothes,Suits,Costumes trois pièces pour hommes,332.99,43
+92,clothes,Pyjama,Ensembles de pyjamas d'impression d'ananas,52.81,47
+93,clothes,Shirts,Chemise imprimée unie couleur bonbon,33.94,47
+94,clothes,Shirts,Chemise imprimée graffiti dessin animé 3D,39.99,40
+95,clothes,Shirts,Chemise décontractée à rayures rouges et bleues,37.72,47
+96,clothes,Shirts,Chemises respirantes en patchwork de couleurs contrastées,37.71,33
+97,clothes,Hoodies,Sweat à capuche zippé sport pour homme,51.99,32
+98,clothes,Pyjama,Rayure en deux pièces Soft Coordonnés,52.81,53
+99,clothes,Shirts,Chemise patchwork de style ethnique,33.99,47
+100,clothes,Shirts,Chemises patchwork en velours côtelé,47.99,50
+101,clothes,Shirts,Colorful Chemise à imprimé papillon,37.72,47
+102,clothes,Shirts,Chemises décontractées multicolores à imprimé chat,39.99,50
+103,clothes,Hoodies,Sweat à capuche homme style rétro,54.99,35
+104,clothes,Shirts,Chemise à capuche plaine ethnique vintage en coton,60.99,41
+105,clothes,T-Shirts,T-shirts 100% coton à motif d'avion,29.99,67
+106,clothes,T-Shirts,T-shirts à rayures verticales,29.99,50
+107,clothes,Shirts,Chemise imprimée Fun Graffiti Halloween,37.72,47
+108,clothes,Shirts,Colorful Chemises à rayures,39.99,50
+109,clothes,T-Shirts,T-shirt graphique imprimé en coton,43.99,38
+110,clothes,Shirts,Chemise en coton à rayures verticales respirantes,29.99,37
+111,clothes,Pyjama,Pyjama rayé en fausse soie,49.03,47
+112,clothes,Suits,Colorful Stripe Two Pieces,51.99,50
+113,clothes,T-Shirts,T-shirts décontractés à imprimé slogan,37.71,33
+114,clothes,Shirts,Chemises à manches courtes imprimées tropicales,33.94,32
+115,clothes,Shirts,Chemises de couleur unie respirantes en coton,39.98,50
+116,clothes,Shirts,Chemises décontractées en velours côtelé design,39.99,50
+117,clothes,T-Shirts,T-shirt imprimé en coton,22.62,47
+118,clothes,Sweaters,Chandail à col haut de couleur unie pour hommes,49.99,43
+119,clothes,Shirts,Chemises à motif floral élégantes pour hommes,38.99,30
+120,clothes,Suits,Ensembles de lumières à imprimé banane,65.98,58
+121,clothes,Shirts,Chemises à manches longues de couleur unie,35.99,50
+122,clothes,Suits,Costumes imprimés de dessin animé drôle de l'espace,65.99,50
+123,clothes,Shirts,Chemise à manches 3/4 en lin et coton uni ,42.99,34
+124,clothes,Shirts,Chemises à fleurs sexy couleur unie pure,37.99,28
+125,house,Flowers,150pcs / pack de graines de fleurs Hosta,8.99,45
+126,house,Carpets,Tapis de maison antidérapants de style floral classique européen,43.74,63
+127,house,Flowers,Lot de 100 pcs semences de lithops bleus vivaces pseudotruncatella,10.99,46
+128,house,Flowers,400pcs Egrow 4 Varieties Mixed Rose Flowers Seeds Pink Succulen Blue Witchford Seeds,25.99,50
+129,house,Carpets,Tapis antidérapants SeaShell,27.78,55
+130,house,Carpets,Ultra Soft tapis moelleux pour chambre à coucher enfants chambre en peluche tapis de pépinière shaggy tapis de jet de fourrure pour collège dortoir tapis flous salon décoration de la maison tapis,29.46,37
+131,house,Carpets,"Tapis rond 3D, tapis antidérapant à carreaux Vortexs Optical Illusions, tapis de sol antidérapant Durbale paillasson noir blanc non tissé, pour salon cuisine de chambre à coucher",47.49,68
+132,house,Carpets,2pcs / set tapis de sol pour chat de dessin animé,60.71,67
+133,house,Flowers,Lot de 100 pcs graines de Allium giganteum géant fleurs jardin plein air,10.99,49
+134,house,Carpets,Tapis moelleux anti-dérapant de couverture de porte,37.49,39
+135,house,Cups & Mugs,Coupe Unicorn Cartoon,27.78,42
+136,house,Flowers,100pcs Purple Dragon Rose Graines,9.99,44
+137,house,Flowers,Lot de 100 pcs semences de géranium pour jardin,11.99,53
+138,house,Flowers,Egrow 100PCS graines de fleurs de glaïeul,7.99,44
+139,house,Flowers,100pcs / pack graines de Plumeria,9.99,33
+140,house,Flowers, Graines d'oseille de canne de bonbon,10.99,39
+141,house,Flowers,50pcs / sac Rare Iris Tectorum Graines,9.99,33
+142,house,Flowers,100pcs graines de fleurs arc-en-ciel ,11.99,35
+143,house,Carpets,Tapis matelassés floraux antidérapants à 100% coton,30.99,48
+144,house,Flowers,Egrow 50 Pcs / Pack Kolkwitzia Seeds Kolkwitzia Tree ,11.99,53
+145,house,Cups & Mugs,"Gobelet à eau facile à utiliser, corde en silicone 350ml, petit et mignon, simple et portable",18.99,47
+146,house,Carpets,Tapis de salle de bain Tapis de salle de bain Tapis de salle de bain Tapis de sol de salle de bains Cuisine de plancher antidérapant Starfish 60 * 90cm,32.99,49
+147,house,Cups & Mugs,Tasses à café 500ml ,28.74,51
+148,house,Carpets,Coloré Chenille Rayé Rectangle Moelleux Plancher De Tapis Tapis Tapis Zone Salon Chambre Maison Décoration,23.99,46
+149,house,Cups & Mugs,Tasse à thé en verre,27.99,48
+150,house,Carpets,Tapis de sol blanc pour tapis de mariage,168.99,41
+151,house,Flowers,50 pcs / pack graines de camomille jaune 100 pcs / pack graines de fleurs,10.99,49
+152,house,Cups & Mugs,Tasse d'eau en céramique de café thermique de tasse de couleur de chat mignon,34.17,46
+153,house,Carpets,Tapis de porte motif paysage marin,21.71,41
+154,house,Carpets,"Tapis blanc de 1,2 M x 10 Mo Tapis d&#39;allée de mariage Événement Décoration Mats Tapis",92.16,34
+155,house,Carpets,40x60cm Flanelle de Noël Tapis de mousse à mémoire en velours Tapis de bain absorbant antidérapant Tapis de sol doux antidérapant,24.99,40
+156,house,Carpets,Coton Tapis De Chambre Tapis Tapis ,45.99,39
+157,house,Teapots,Pot d'isolation en acier inoxydable ,70.39,55
+158,house,Flowers,Lot de 20 pcs semences de hortensia,9.99,33
+159,house,Flowers,30pcs / pack graines d'aster multicolores,6.99,36
+160,house,Flowers,100pcs Phalaenopsis graines décoration intérieure de salon,12.99,57
+161,house,Flowers,Egrow 50 Pcs Lily Seeds Garland Flame Lilium Brownii Flower ,10.29,55
+162,house,Carpets,Style ethnique rétro couverture tapis tapis de sol tapis anti-dérapant salle de bain tapis tapis pour salon lavage en Machine,52.99,91
+163,house,Flowers,5pcs graines de nénuphar ,9.99,44
+164,house,Flowers,30pcs graines fuchsia hybrida voss,10.99,39
+165,house,Flowers,Egrow 100 graines de géranium PCS,12.99,57
+166,house,Flowers,Lot de 100 pcs graines de roses colorées,9.99,44
+167,house,Carpets,Tapis Jouets bébé enfants Gym,81.77,43
+168,house,Carpets,80 x 80 cm Tapis de sol de flanelle de licorne de fée licorne,40.99,51
+169,house,Teapots,Théière en verre résistant à la chaleur de 600 ml,62.71,49
+170,house,Cups & Mugs,Mug créatif de Noël,32.99,42
+171,house,Flowers,50 pièces / paquet de graines de camomille jaune 100 pièces / paquet de graines de fleurs,10.99,49
+172,house,Flowers,Egrow100 pièces / paquet de graines de campanule bleue,10.99,49
+173,house,Cups & Mugs,500ML Ins Style Coupe de paille ,31.81,42
+174,house,Cups & Mugs,Tasse Céramique Licorne,33.38,48
+175,house,Carpets,Tapis absorbant anti-glisse Soft pour salle de bains,25.99,46
+176,house,Carpets,Tapis antidérapant tapis de porte Alpaga de dessin animé,21.99,41
+177,house,Carpets,Tapis antidérapants rembourrés 40x60cm,15.42,35
+178,house,Carpets,3 tailles Tapis moussants violets Tapis antidérapant Shaggy Tapis de sol Salle à manger Chambre à coucher Chambre Tapis,41.99,50
+179,house,Carpets,Pare-chocs Tapis de toilette en caoutchouc anti-glissement Tapis de toilette,29.99,47
+180,house,Carpets,Tapis de sol en coton et lin de Style ethnique tapis de sol tapis antidérapants tapis de salle de bain tapis pour salon lavage en Machine,34.99,86
+181,house,Flowers,100pcs / sac Rare Rainbow Chinese Peony Flowers,9.99,33
+182,house,Flowers,Egrow 10Pcs Péruvienne Parfum Tulipe Graine,9.99,44
+183,beauty,Lipstick,Missyoung Gloss Mat Sexy Brillant à Lèvres Liquide,17.18,43
+184,beauty,Lipstick,Missyoung Gloss Mat Sexy Brillant à Lèvres Liquide,17.18,43
+185,beauty,Lipstick,Mini-glaçage pour les lèvres,25.76,40
+186,beauty,Lipstick,8pcs pochoir tatouage au henné,35.35,46
+187,beauty,Highlighters & Bronzers,Palette Ombre à Paupières Multifonction 9 Couleurs,49.99,91
+188,beauty,Blush,fey beauté Blush poudre libre,22.01,39
+189,beauty,Highlighters & Bronzers,Palette multifonctionnelle bicolore ,47.99,52
+190,beauty,Eyeliner,Eyeliner imperméable 2 en 1,20.78,50
+191,beauty,Eyeliner,Eyeliner Noir Riche Séchage Rapide,16.99,53
+192,beauty,Blush,Rose Maquillage Blush,23.99,50
+193,beauty,Eyeliner,Eyeliner Aid Tool,6.99,43
+194,beauty,Lipstick,8 couleurs Longue durée d&#39;étanchéité matte Velvet Lip Gloss Lipstick Vampire Style,9.19,48
+195,beauty,Highlighters & Bronzers,Palette de mise en évidence de 4 couleurs,15.99,50
+196,beauty,Lipstick,Kit de Lipgloss mat 5pcs,25.99,50
+197,beauty,Lipstick,Rouge à lèvres liquide Mermaid Shimmer,20.84,53
+198,beauty,Lipstick,Huiles à lèvres hydratantes sexy,14.58,50
+199,beauty,Lipstick,Ensemble de 6pcs rouges à lèvres liquides mats,35.61,51
+200,beauty,Lipstick,Brillant à lèvres pailleté étoilé,20.2,45
+201,shoes,Sneakers,Baskets plates élastiques en tricot d'épissage,39.99,50
+202,shoes,Sneakers,Baskets à enfiler en maille Air Mesh,39.99,50
+203,shoes,Sneakers,Chaussettes athlétiques respirantes en maille,39.99,50
+204,shoes,Sneakers,Chaussures de sport en maille à velcro,60.29,75
+205,shoes,Sneakers,Chaussures plates en mesh respirant,69.29,76
+206,shoes,Sneakers,Chaussures plates en maille Beathable,24.69,47
+207,shoes,Sneakers,Baskets sport à plateforme,59.63,50
+208,shoes,Slipper,Pantoufles à bout carré fleuri,37.99,50
+209,shoes,Sneakers,Chaussures de marche plates à enfiler en maille Soft,59.99,51
+210,shoes,Sneakers,Baskets à enfiler avec semelle à bascule,65.99,50
+211,shoes,Sneakers,Chaussures décontractées imprimées léopard colorblock,51.96,49
+212,shoes,Sneakers,Baskets plates à motif d'impression rétro,141.99,47
+213,shoes,Sneakers,Baskets en daim léger doublées chaudes,100.61,40
+214,shoes,Sneakers,Chaussures de sport en mesh,80.95,35
+215,shoes,Sneakers,Bottes mi-mollet en coton à doublure chaude,107.99,47
+216,shoes,Sneakers,Chaussures en cuir blanches pour femmes,84.36,42
+217,shoes,Sandals,Les femmes ont augmenté les sandales de plate-forme de sport portable,48.64,49
+218,shoes,Sneakers,Chaussures de sport en toile à bout rond,82.99,51
+219,shoes,Heels,Escarpins Stiletto en daim avec croix,70.96,43
+220,shoes,Sneakers,Baskets en mesh respirant pour femmes,81.48,43
+221,shoes,Sneakers,"Rouge à lèvres, impression de chaussures décontractées sportives à lacets",89.62,43
+222,shoes,Slipper,Daisy Decor Cross Bande Soft Jelly Sole Slippe,46.42,49
+223,shoes,Sneakers,Stretch Casual Trépied Respirant Slip On Shook Shoes Sneakers,50.99,37
+224,shoes,Sneakers, Toile d'impression chaussures de sport à semelle épaisse,91.85,39
+225,shoes,Sneakers,Chaussures de sport chaudes,97.01,42
+226,shoes,Sneakers,Chaussures en cuir de grande taille,88.93,36
+227,shoes,Sneakers,Chaussures de sport de grande taille antidérapantes avec boucle à crochet,66.33,44
+228,shoes,Sneakers,Baskets plates portables respirantes en mesh de grande taille,61.45,45
+229,shoes,Sneakers,Chaussures de course décontractées pour femmes,80.4,38
+230,shoes,Sneakers,Respirant Tricoté Sport Athlétique Casual Chaussures,66.99,45
+231,shoes,Sandals,Sandales plates à fermeture éclair à grande taille,48,50
+232,shoes,Sandals,Sandales plates-formes de sport légères confortables pour femmes,57.46,49
+233,shoes,Sneakers,Baskets sport occasionnelles pour femmes,88.99,39

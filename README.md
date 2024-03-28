@@ -13,7 +13,7 @@ This project presents a comprehensive analysis of TradeXPress, a global trade co
 
 The project began with the design of an Entity-Relationship (ER) Diagram, which served as the foundation for modeling the database. The ER Diagram was meticulously mapped to ensure accurate representation of the business's data structure. Subsequently, the database was implemented using Microsoft SQL Server, adhering to best practices in database design and implementation.
 
-- ER Diagram: ![ERD](https://github.com/jumaa0/TradeXpress-Business-Analysis/assets/126451388/3c8358eb-f4f2-470f-a26d-e1c64182f306)
+- ER Diagram: ![ERD](database/ERD.png)
 - Database Schema: ![Schema](database/mapping.png)
 
 ## Data Insertion

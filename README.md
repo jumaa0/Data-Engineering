@@ -63,5 +63,6 @@ The project has successfully integrated data from flat files, transformed it usi
 ![Tableau](Tableau_dashboard/tableau_dashboard.png)
 ## Documentaion
 [Project Documentation Overview](docs/Documentation.pdf): Overview of the project, its objectives, and scope.
+
 [Documentation.pdf](https://github.com/jumaa0/MyWish-Application/files/14805149/Documentation.pdf)
 

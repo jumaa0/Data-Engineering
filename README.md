@@ -1,4 +1,4 @@
-# Data Integration & ETL "DataStage" for TradeXPress
+# Data Engineering & ETL "DataStage" for TradeXPress
 
 ## Table of Contents
 1. [Overview](#overview)

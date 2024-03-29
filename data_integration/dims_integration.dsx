@@ -1,0 +1,5259 @@
+BEGIN HEADER
+   CharacterSet "CP1252"
+   ExportingTool "IBM InfoSphere DataStage Export"
+   ToolVersion "8"
+   ServerName "IBMDSSERVER"
+   ToolInstanceID "jumaa"
+   MDISVersion "1.0"
+   Date "2024-03-29"
+   Time "08.29.48"
+   ServerVersion "9.1"
+END HEADER
+BEGIN DSJOB
+   Identifier "dim_integration"
+   DateModified "2024-03-29"
+   TimeModified "07.21.56"
+   BEGIN DSRECORD
+      Identifier "ROOT"
+      OLEType "CJobDefn"
+      Readonly "0"
+      Name "dim_integration"
+      NextID "2"
+      Container "V0"
+      JobVersion "56.0.0"
+      ControlAfterSubr "0"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "AdvancedRuntimeOptions"
+         Value "#DSProjectARTOptions#"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "IdentList"
+         Value "Customer|Transformer_5|dim_customers|Territory|Join_22|Products|Join_39|Category|dim_products|Shipper|dim_shipper|Employee|dim_employee|dim_territory|Remove_Duplicates_52"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "ClientCodePage"
+         Value "1252"
+      END DSSUBRECORD
+      NULLIndicatorPosition "0"
+      OrchestrateCode =+=+=+=
+#################################################################
+#### STAGE: Customer
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  customerID:ustring[max=255];
+  contactName:ustring[max=255];
+  contactTitle:ustring[max=255];
+  companyName:ustring[max=255];
+  city:ustring[max=255];
+  country:ustring[max=255];
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  'C:\\\\data\\\\Customers.csv'
+
+## General options
+[ident('Customer'); jobmon_ident('Customer')]
+## Outputs
+0> [] 'Customer:DSLink23.v'
+;
+
+#################################################################
+#### STAGE: Transformer_5
+## Operator
+transform
+## Operator options
+-flag run
+-name 'V0S5_data_integration_Transformer_5'
+
+## General options
+[ident('Transformer_5'); jobmon_ident('Transformer_5')]
+## Inputs
+0< [] 'Join_22:DSLink26.v'
+## Outputs
+0> [] 'Transformer_5:DSLink10.v'
+1> [] 'Transformer_5:DSLink53.v'
+;
+
+#################################################################
+#### STAGE: dim_customers
+## Operator
+export
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  customerID:ustring[max=255];
+  contactName:ustring[max=255];
+  contactTitle:ustring[max=255];
+  companyName:ustring[max=255];
+  TerritoryID:int32 {quote=none};
+)
+-file 'C:\\\\target\\\\dim_customers.txt'
+-overwrite
+-rejects continue
+-firstLineColumnNames
+
+## General options
+[ident('dim_customers'); jobmon_ident('dim_customers')]
+## Inputs
+0< [] 'Transformer_5:DSLink10.v'
+;
+
+#################################################################
+#### STAGE: Territory
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  TerritoryID:int32 {quote=none};
+  country:ustring[max=255];
+  city:ustring[max=255];
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  'C:\\\\data\\\\DimTerritory.csv'
+
+## General options
+[ident('Territory'); jobmon_ident('Territory')]
+## Outputs
+0> [] 'Territory:DSLink24.v'
+;
+
+#################################################################
+#### STAGE: Join_22
+## Operator
+leftouterjoin
+## Operator options
+-key 'city'
+
+## General options
+[ident('Join_22'); jobmon_ident('Join_22')]
+## Inputs
+0< [] 'Customer:DSLink23.v'
+1< [] 'Territory:DSLink24.v'
+## Outputs
+0> [modify (
+keep
+  customerID,contactName,contactTitle,companyName,
+  city,country,TerritoryID;
+)] 'Join_22:DSLink26.v'
+;
+
+#################################################################
+#### STAGE: Products
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  productID:int32 {quote=none};
+  productName:ustring[max=255];
+  quantityPerUnit:ustring[max=255];
+  unitPrice:int32 {quote=none};
+  discontinued:int32 {quote=none};
+  categoryID:int32 {quote=none};
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  'C:\\\\data\\\\products.csv'
+
+## General options
+[ident('Products'); jobmon_ident('Products')]
+## Outputs
+0> [] 'Products:DSLink40.v'
+;
+
+#################################################################
+#### STAGE: Join_39
+## Operator
+innerjoin
+## Operator options
+-key 'categoryID'
+
+## General options
+[ident('Join_39'); jobmon_ident('Join_39')]
+## Inputs
+0< [] 'Products:DSLink40.v'
+1< [] 'Category:Category.v'
+## Outputs
+0> [modify (
+keep
+  productID,productName,quantityPerUnit,unitPrice,
+  discontinued,categoryID,categoryName,description;
+)] 'Join_39:DSLink43.v'
+;
+
+#################################################################
+#### STAGE: Category
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  categoryID:int32 {quote=none};
+  categoryName:ustring[max=255];
+  description:ustring[max=255];
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  'C:\\\\data\\\\categories.csv'
+
+## General options
+[ident('Category'); jobmon_ident('Category')]
+## Outputs
+0> [] 'Category:Category.v'
+;
+
+#################################################################
+#### STAGE: dim_products
+## Operator
+export
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  productID:int32 {quote=none};
+  productName:ustring[max=255];
+  quantityPerUnit:ustring[max=255];
+  unitPrice:int32 {quote=none};
+  discontinued:int32 {quote=none};
+  categoryID:int32 {quote=none};
+  categoryName:ustring[max=255];
+  description:ustring[max=255];
+)
+-file 'C:\\\\target\\\\dim_products'
+-overwrite
+-rejects continue
+-firstLineColumnNames
+
+## General options
+[ident('dim_products'); jobmon_ident('dim_products')]
+## Inputs
+0< [] 'Join_39:DSLink43.v'
+;
+
+#################################################################
+#### STAGE: Shipper
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  shipperID:int32 {quote=none};
+  companyName:ustring[max=255];
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  'C:\\\\data\\\\shippers.csv'
+
+## General options
+[ident('Shipper'); jobmon_ident('Shipper')]
+## Outputs
+0> [] 'Shipper:DSLink46.v'
+;
+
+#################################################################
+#### STAGE: dim_shipper
+## Operator
+export
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  shipperID:int32 {quote=none};
+  companyName:ustring[max=255];
+)
+-file 'C:\\\\target\\\\dim_shipper'
+-overwrite
+-rejects continue
+-firstLineColumnNames
+
+## General options
+[ident('dim_shipper'); jobmon_ident('dim_shipper')]
+## Inputs
+0< [] 'Shipper:DSLink46.v'
+;
+
+#################################################################
+#### STAGE: Employee
+## Operator
+import
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  employeeID:int32 {quote=none};
+  employeeName:ustring[max=255];
+  title:ustring[max=255];
+  city:ustring[max=255];
+  country:ustring[max=255];
+  reportsTo:int32 {quote=none};
+)
+-rejects continue
+-reportProgress yes
+-firstLineColumnNames
+-file  'C:\\\\data\\\\employees.csv'
+
+## General options
+[ident('Employee'); jobmon_ident('Employee')]
+## Outputs
+0> [] 'Employee:DSLink49.v'
+;
+
+#################################################################
+#### STAGE: dim_employee
+## Operator
+export
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  employeeID:int32 {quote=none};
+  employeeName:ustring[max=255];
+  title:ustring[max=255];
+  city:ustring[max=255];
+  country:ustring[max=255];
+  reportsTo:int32 {quote=none};
+)
+-file 'C:\\\\target\\\\dim_employee'
+-overwrite
+-rejects continue
+-firstLineColumnNames
+
+## General options
+[ident('dim_employee'); jobmon_ident('dim_employee')]
+## Inputs
+0< [] 'Employee:DSLink49.v'
+;
+
+#################################################################
+#### STAGE: dim_territory
+## Operator
+export
+## Operator options
+-schema record
+  {final_delim=end, delim=',', quote=double}
+(
+  TerritoryID:int32 {quote=none};
+  city:ustring[max=255];
+  country:ustring[max=255];
+)
+-file 'C:\\\\target\\\\dim_territory'
+-overwrite
+-rejects continue
+-firstLineColumnNames
+
+## General options
+[ident('dim_territory'); jobmon_ident('dim_territory')]
+## Inputs
+0< [] 'Remove_Duplicates_52:DSLink54.v'
+;
+
+#################################################################
+#### STAGE: Remove_Duplicates_52
+## Operator
+remdup
+## Operator options
+-keep first
+-key 'TerritoryID'
+-key 'city'
+-key 'country'
+
+## General options
+[ident('Remove_Duplicates_52'); jobmon_ident('Remove_Duplicates_52')]
+## Inputs
+0< [] 'Transformer_5:DSLink53.v'
+## Outputs
+0> [modify (
+keep
+  TerritoryID,city,country;
+)] 'Remove_Duplicates_52:DSLink54.v'
+;
+
+
+=+=+=+=
+      IsTemplate "0"
+      JobType "3"
+      Category "\\Jobs"
+      CenturyBreakYear "30"
+      NextAliasID "2"
+      ParameterFileDDName "DD00001"
+      ReservedWordCheck "1"
+      TransactionSize "0"
+      ValidationStatus "0"
+      Uploadable "0"
+      PgmCustomizationFlag "0"
+      JobReportFlag "0"
+      AllowMultipleInvocations "0"
+      Act2ActOverideDefaults "0"
+      Act2ActEnableRowBuffer "0"
+      Act2ActUseIPC "0"
+      Act2ActBufferSize "0"
+      Act2ActIPCTimeout "0"
+      ExpressionSemanticCheckFlag "0"
+      TraceOption "0"
+      EnableCacheSharing "0"
+      RuntimeColumnPropagation "0"
+      RelStagesInJobStatus "-1"
+      WebServiceEnabled "0"
+      MFProcessMetaData "0"
+      MFProcessMetaDataXMLFileExchangeMethod "0"
+      IMSProgType "0"
+      CopyLibPrefix "ARDT"
+      RecordPerformanceResults "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0"
+      OLEType "CContainerView"
+      Readonly "0"
+      Name "Job"
+      NextID "1"
+      IsTopLevel "0"
+      StageList "V0S0|V0S5|V0S12|V0S20|V0S22|V0S38|V0S39|V1S0|V0S42|V0S44|V0S45|V0S47|V0S48|V0S50|V0S52"
+      StageXPos "96|408|600|96|264|96|264|96|432|96|408|96|408|744|552"
+      StageYPos "120|144|72|192|168|264|264|336|264|408|408|480|480|216|216"
+      StageTypes "CCustomStage|CTransformerStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage|CCustomStage"
+      NextStageID "55"
+      SnapToGrid "1"
+      GridLines "0"
+      ZoomValue "100"
+      StageXSize "48|48|48|48|48|48|48|48|48|48|48|48|48|48|48"
+      StageYSize "48|48|48|48|48|48|48|48|48|48|48|48|48|48|48"
+      ContainerViewSizing "0000 0000 1076 0321 0000 0001 0000 0040"
+      StageNames "Customer|Transformer_5|dim_customers|Territory|Join_22|Products|Join_39|Category|dim_products|Shipper|dim_shipper|Employee|dim_employee|dim_territory|Remove_Duplicates_52"
+      StageTypeIDs "PxSequentialFile|CTransformerStage|PxSequentialFile|PxSequentialFile|PxJoin|PxSequentialFile|PxJoin|PxSequentialFile|PxSequentialFile|PxSequentialFile|PxSequentialFile|PxSequentialFile|PxSequentialFile|PxSequentialFile|PxRemDup"
+      LinkNames "DSLink23|DSLink10,DSLink53| |DSLink24|DSLink26|DSLink40|DSLink43|Category| |DSLink46| |DSLink49| | |DSLink54"
+      LinkHasMetaDatas "True|True,True| |True|True|True|True|True| |True| |True| | |True"
+      LinkTypes "1|1,1| |1|1|1|1|1| |1| |1| | |1"
+      LinkNamePositionXs "204|477,504| |208|358|204|372|183| |276| |276| | |672"
+      LinkNamePositionYs "147|85,169| |210|181|252|280|325| |432| |504| | |216"
+      TargetStageIDs "V0S22|V0S12,V0S52| |V0S22|V0S5|V0S39|V0S42|V0S39| |V0S45| |V0S48| | |V0S50"
+      SourceStageEffectiveExecutionModes "1|2,2| |1|2|1|2|1| |1| |1| | |2"
+      SourceStageRuntimeExecutionModes "1|2,2| |1|2|1|2|1| |1| |1| | |2"
+      TargetStageEffectiveExecutionModes "2|1,2| |2|2|2|1|2| |1| |1| | |1"
+      TargetStageRuntimeExecutionModes "2|1,2| |2|2|2|1|2| |1| |1| | |1"
+      LinkIsSingleOperatorLookup "False|False,False| |False|False|False|False|False| |False| |False| | |False"
+      LinkIsSortSequential "False|False,False| |False|False|False|False|False| |False| |False| | |False"
+      LinkSortMode "0|0,0| |0|0|0|0|0| |0| |0| | |0"
+      LinkPartColMode "1|1,1| |1|1|1|1|1| |1| |1| | |1"
+      LinkSourcePinIDs "V0S0P2|V0S5P3,V0S5P8| |V0S20P1|V0S22P4|V0S38P1|V0S39P5|V1S0P1| |V0S44P1| |V0S47P1| | |V0S52P2"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S0"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Customer"
+      NextID "3"
+      OutputPins "V0S0P2"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S0P2"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink23"
+      Partner "V0S22|V0S22P1"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Value "file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Value "yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Value "\(2)\(2)0\(1)\(3)file \(2)C:\\data\\Customers.csv\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Value " "
+      END DSSUBRECORD
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "customerID"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "customerID"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "18"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "contactName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactTitle"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "20"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "contactTitle"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "companyName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "34"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "companyName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "city"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "country"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "204"
+      TopTextPos "147"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S12"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "dim_customers"
+      NextID "2"
+      InputPins "V0S12P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S12P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink10"
+      Partner "V0S5|V0S5P3"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file"
+         Value "\(2)\(2)0\(1)\(3)file\(2)C:\\target\\dim_customers.txt\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "append\\overwrite"
+         Value "overwrite"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nocleanup"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "writemethod"
+         Value "\(2)\(2)0\(1)\(3)writemethod\(2) \(2)0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S20"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Territory"
+      NextID "2"
+      OutputPins "V0S20P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S20P1"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink24"
+      Partner "V0S22|V0S22P2"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Value "file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Value "yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Value "\(2)\(2)0\(1)\(3)file \(2)C:\\data\\DimTerritory.csv\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Value " "
+      END DSSUBRECORD
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "TerritoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "TerritoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "country"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "city"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "208"
+      TopTextPos "210"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S22"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Join_22"
+      NextID "5"
+      InputPins "V0S22P1|V0S22P2"
+      OutputPins "V0S22P4"
+      StageType "PxJoin"
+      AllowColumnMapping "0"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "operator"
+         Value "leftouterjoin"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "key"
+         Value "\(2)\(2)0\(1)\(3)key\(2)city\(2)0"
+      END DSSUBRECORD
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S22P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink23"
+      Partner "V0S0|V0S0P2"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S22P2"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink24"
+      Partner "V0S20|V0S20P1"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S22P4"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink26"
+      Partner "V0S5|V0S5P6"
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "customerID"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         Derivation "DSLink23.customerID"
+         Group "0"
+         ParsedDerivation "DSLink23.customerID"
+         SourceColumn "DSLink23.customerID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "customerID"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "18"
+         Derivation "DSLink23.contactName"
+         Group "0"
+         ParsedDerivation "DSLink23.contactName"
+         SourceColumn "DSLink23.contactName"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "contactName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactTitle"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "20"
+         Derivation "DSLink23.contactTitle"
+         Group "0"
+         ParsedDerivation "DSLink23.contactTitle"
+         SourceColumn "DSLink23.contactTitle"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "contactTitle"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "companyName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "34"
+         Derivation "DSLink23.companyName"
+         Group "0"
+         ParsedDerivation "DSLink23.companyName"
+         SourceColumn "DSLink23.companyName"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "companyName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         Derivation "DSLink23.city"
+         Group "0"
+         ParsedDerivation "DSLink23.city"
+         SourceColumn "DSLink23.city"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "city"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         Derivation "DSLink23.country"
+         Group "0"
+         ParsedDerivation "DSLink23.country"
+         SourceColumn "DSLink23.country"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "country"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "TerritoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink24.TerritoryID"
+         Group "0"
+         ParsedDerivation "DSLink24.TerritoryID"
+         SourceColumn "DSLink24.TerritoryID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "TerritoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "358"
+      TopTextPos "181"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S38"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Products"
+      NextID "2"
+      OutputPins "V0S38P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S38P1"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink40"
+      Partner "V0S39|V0S39P1"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Value "file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Value "yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Value "\(2)\(2)0\(1)\(3)file \(2)C:\\data\\products.csv\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Value " "
+      END DSSUBRECORD
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "productID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "productID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "productName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "31"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "productName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "quantityPerUnit"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "19"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "quantityPerUnit"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "unitPrice"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "unitPrice"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "discontinued"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "discontinued"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "categoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "categoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "204"
+      TopTextPos "252"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S39"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Join_39"
+      NextID "6"
+      InputPins "V0S39P1|V0S39P4"
+      OutputPins "V0S39P5"
+      StageType "PxJoin"
+      AllowColumnMapping "0"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "operator"
+         Value "innerjoin"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "key"
+         Value "\(2)\(2)0\(1)\(3)key\(2)categoryID\(2)0"
+      END DSSUBRECORD
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S39P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink40"
+      Partner "V0S38|V0S38P1"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S39P4"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "Category"
+      Partner "V1S0|V1S0P1"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S39P5"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink43"
+      Partner "V0S42|V0S42P1"
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "productID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink40.productID"
+         Group "0"
+         ParsedDerivation "DSLink40.productID"
+         SourceColumn "DSLink40.productID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "productID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "productName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "31"
+         Derivation "DSLink40.productName"
+         Group "0"
+         ParsedDerivation "DSLink40.productName"
+         SourceColumn "DSLink40.productName"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "productName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "quantityPerUnit"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "19"
+         Derivation "DSLink40.quantityPerUnit"
+         Group "0"
+         ParsedDerivation "DSLink40.quantityPerUnit"
+         SourceColumn "DSLink40.quantityPerUnit"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "quantityPerUnit"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "unitPrice"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         Derivation "DSLink40.unitPrice"
+         Group "0"
+         ParsedDerivation "DSLink40.unitPrice"
+         SourceColumn "DSLink40.unitPrice"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "unitPrice"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "discontinued"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink40.discontinued"
+         Group "0"
+         ParsedDerivation "DSLink40.discontinued"
+         SourceColumn "DSLink40.discontinued"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "discontinued"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "categoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink40.categoryID"
+         Group "0"
+         ParsedDerivation "DSLink40.categoryID"
+         SourceColumn "DSLink40.categoryID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\products.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "categoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "categoryName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         Derivation "Category.categoryName"
+         Group "0"
+         ParsedDerivation "Category.categoryName"
+         SourceColumn "Category.categoryName"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\categories.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "categoryName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "description"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "60"
+         Derivation "Category.description"
+         Group "0"
+         ParsedDerivation "Category.description"
+         SourceColumn "Category.description"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\categories.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "description"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "372"
+      TopTextPos "280"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S42"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "dim_products"
+      NextID "2"
+      InputPins "V0S42P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S42P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink43"
+      Partner "V0S39|V0S39P5"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file"
+         Value "\(2)\(2)0\(1)\(3)file\(2)C:\\target\\dim_products\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "append\\overwrite"
+         Value "overwrite"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nocleanup"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "writemethod"
+         Value "\(2)\(2)0\(1)\(3)writemethod\(2) \(2)0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S44"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Shipper"
+      NextID "2"
+      OutputPins "V0S44P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S44P1"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink46"
+      Partner "V0S45|V0S45P1"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Value "file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Value "yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Value "\(2)\(2)0\(1)\(3)file \(2)C:\\data\\shippers.csv\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Value " "
+      END DSSUBRECORD
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "shipperID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\shippers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "shipperID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "companyName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\shippers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "companyName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "276"
+      TopTextPos "432"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S45"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "dim_shipper"
+      NextID "2"
+      InputPins "V0S45P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S45P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink46"
+      Partner "V0S44|V0S44P1"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file"
+         Value "\(2)\(2)0\(1)\(3)file\(2)C:\\target\\dim_shipper\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "append\\overwrite"
+         Value "overwrite"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nocleanup"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "writemethod"
+         Value "\(2)\(2)0\(1)\(3)writemethod\(2) \(2)0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S47"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Employee"
+      NextID "2"
+      OutputPins "V0S47P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S47P1"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink49"
+      Partner "V0S48|V0S48P1"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Value "file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Value "yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Value "\(2)\(2)0\(1)\(3)file \(2)C:\\data\\employees.csv\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Value " "
+      END DSSUBRECORD
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "employeeID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\employees.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "employeeID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "employeeName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\employees.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "employeeName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "title"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "20"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\employees.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "title"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "8"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\employees.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "city"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "3"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\employees.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "country"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportsTo"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\employees.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "reportsTo"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "276"
+      TopTextPos "504"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S48"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "dim_employee"
+      NextID "2"
+      InputPins "V0S48P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S48P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink49"
+      Partner "V0S47|V0S47P1"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file"
+         Value "\(2)\(2)0\(1)\(3)file\(2)C:\\target\\dim_employee\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "append\\overwrite"
+         Value "overwrite"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nocleanup"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "writemethod"
+         Value "\(2)\(2)0\(1)\(3)writemethod\(2) \(2)0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5"
+      OLEType "CTransformerStage"
+      Readonly "0"
+      Name "Transformer_5"
+      NextID "9"
+      InputPins "V0S5P6"
+      OutputPins "V0S5P3|V0S5P8"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "TrxGenCode"
+         Value =+=+=+=
+//
+// Generated file to implement the V0S5_data_integration_Transformer_5 transform operator.
+//
+
+// define our input/output link names
+inputname 0 DSLink26;
+outputname 0 DSLink10;
+outputname 1 DSLink53;
+
+initialize {
+	// define our control variables
+	int8 RowRejected0;
+	int8 NullSetVar0;
+
+	// Stage variable declaration and initialisation
+	string StageVar0_StageVar;
+	StageVar0_StageVar = "";
+}
+
+mainloop {
+
+	// evaluate the stage variables first
+
+	// initialise the rejected row variable
+	RowRejected0 = 1;
+
+	// evaluate columns (no constraints) for link: DSLink10
+	writerecord 0;
+	RowRejected0 = 0;
+	// evaluate columns (no constraints) for link: DSLink53
+	writerecord 1;
+	RowRejected0 = 0;
+}
+
+finish {
+}
+
+=+=+=+=
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "TrxGenCache"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "TrxClassName"
+         Value "V0S5_data_integration_Transformer_5"
+      END DSSUBRECORD
+      ValidationStatus "0"
+      StageType "CTransformerStage"
+      BlockSize "0"
+      StageVars "CStageVar"
+      BEGIN DSSUBRECORD
+         Name "StageVar"
+         SqlType "12"
+         Precision "255"
+         ColScale "0"
+         ExtendedPrecision "0"
+      END DSSUBRECORD
+      StageVarsMinimised "0"
+      LoopVarsMaximised "0"
+      MaxLoopIterations "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S50"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "dim_territory"
+      NextID "3"
+      InputPins "V0S50P2"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S50P2"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink54"
+      Partner "V0S52|V0S52P2"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file"
+         Value "\(2)\(2)0\(1)\(3)file\(2)C:\\target\\dim_territory\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "append\\overwrite"
+         Value "overwrite"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nocleanup"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "writemethod"
+         Value "\(2)\(2)0\(1)\(3)writemethod\(2) \(2)0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S52"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Remove_Duplicates_52"
+      NextID "3"
+      InputPins "V0S52P1"
+      OutputPins "V0S52P2"
+      StageType "PxRemDup"
+      AllowColumnMapping "0"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "keep"
+         Value "first"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "key"
+         Value "\(2)\(2)0\(1)\(3)key\(2)TerritoryID\(2)0\(1)\(3)key\(2)city\(2)0\(1)\(3)key\(2)country\(2)0"
+      END DSSUBRECORD
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S52P1"
+      OLEType "CCustomInput"
+      Readonly "0"
+      Name "DSLink53"
+      Partner "V0S5|V0S5P8"
+      LinkType "1"
+      ConditionNotMet "fail"
+      LookupFail "fail"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      TransactionSize "0"
+      TXNBehaviour "0"
+      EnableTxGroup "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S52P2"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "DSLink54"
+      Partner "V0S50|V0S50P2"
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "TerritoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink53.TerritoryID"
+         Group "0"
+         ParsedDerivation "DSLink53.TerritoryID"
+         SourceColumn "DSLink53.TerritoryID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "TerritoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         Derivation "DSLink53.city"
+         Group "0"
+         ParsedDerivation "DSLink53.city"
+         SourceColumn "DSLink53.city"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "city"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         Derivation "DSLink53.country"
+         Group "0"
+         ParsedDerivation "DSLink53.country"
+         SourceColumn "DSLink53.country"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "country"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "672"
+      TopTextPos "216"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5P3"
+      OLEType "CTrxOutput"
+      Readonly "0"
+      Name "DSLink10"
+      Partner "V0S12|V0S12P1"
+      Reject "0"
+      ErrorPin "0"
+      RowLimit "0"
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "customerID"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         Derivation "DSLink26.customerID"
+         Group "0"
+         ParsedDerivation "DSLink26.customerID"
+         SourceColumn "DSLink26.customerID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "customerID"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "18"
+         Derivation "DSLink26.contactName"
+         Group "0"
+         ParsedDerivation "DSLink26.contactName"
+         SourceColumn "DSLink26.contactName"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "contactName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactTitle"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "20"
+         Derivation "DSLink26.contactTitle"
+         Group "0"
+         ParsedDerivation "DSLink26.contactTitle"
+         SourceColumn "DSLink26.contactTitle"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "contactTitle"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "companyName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "34"
+         Derivation "DSLink26.companyName"
+         Group "0"
+         ParsedDerivation "DSLink26.companyName"
+         SourceColumn "DSLink26.companyName"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "companyName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "TerritoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink26.TerritoryID"
+         Group "0"
+         ParsedDerivation "DSLink26.TerritoryID"
+         SourceColumn "DSLink26.TerritoryID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "TerritoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Schema"
+         Value =+=+=+=
+record
+(
+  customerID:ustring[max=255];
+  contactName:ustring[max=255];
+  contactTitle:ustring[max=255];
+  companyName:ustring[max=255];
+  TerritoryID:int32;
+)
+=+=+=+=
+      END DSSUBRECORD
+      LeftTextPos "477"
+      TopTextPos "85"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5P6"
+      OLEType "CTrxInput"
+      Readonly "0"
+      Name "DSLink26"
+      Partner "V0S22|V0S22P4"
+      LinkType "1"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RTColumnProp"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Schema"
+         Value =+=+=+=
+record
+(
+  customerID:ustring[max=255];
+  contactName:ustring[max=255];
+  contactTitle:ustring[max=255];
+  companyName:ustring[max=255];
+  city:ustring[max=255];
+  country:ustring[max=255];
+  TerritoryID:int32;
+)
+=+=+=+=
+      END DSSUBRECORD
+      MultiRow "0"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5P8"
+      OLEType "CTrxOutput"
+      Readonly "0"
+      Name "DSLink53"
+      Partner "V0S52|V0S52P1"
+      Reject "0"
+      ErrorPin "0"
+      RowLimit "0"
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         Derivation "DSLink26.city"
+         Group "0"
+         ParsedDerivation "DSLink26.city"
+         SourceColumn "DSLink26.city"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "city"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         Derivation "DSLink26.country"
+         Group "0"
+         ParsedDerivation "DSLink26.country"
+         SourceColumn "DSLink26.country"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\Customers.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "country"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "TerritoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Derivation "DSLink26.TerritoryID"
+         Group "0"
+         ParsedDerivation "DSLink26.TerritoryID"
+         SourceColumn "DSLink26.TerritoryID"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\DimTerritory.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "TerritoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Schema"
+         Value =+=+=+=
+record
+(
+  city:ustring[max=255];
+  country:ustring[max=255];
+  TerritoryID:int32;
+)
+=+=+=+=
+      END DSSUBRECORD
+      LeftTextPos "504"
+      TopTextPos "169"
+      LinkMinimised "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V1S0"
+      OLEType "CCustomStage"
+      Readonly "0"
+      Name "Category"
+      NextID "2"
+      OutputPins "V1S0P1"
+      StageType "PxSequentialFile"
+      AllowColumnMapping "0"
+      NextRecordID "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V1S0P1"
+      OLEType "CCustomOutput"
+      Readonly "0"
+      Name "Category"
+      Partner "V0S39|V0S39P4"
+      Properties "CCustomProperty"
+      BEGIN DSSUBRECORD
+         Name "schema"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Value "file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Value " "
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Value "continue"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Value "yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Value "firstLineColumnNames"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Value "\(2)\(2)0\(1)\(3)file \(2)C:\\data\\categories.csv\(2)0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Value " "
+      END DSSUBRECORD
+      Columns "COutputColumn"
+      BEGIN DSSUBRECORD
+         Name "categoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\categories.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "categoryID"
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "categoryName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\categories.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "categoryName"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "description"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "60"
+         Group "0"
+         SortKey "0"
+         SortType "0"
+         TableDef "Sequential\\data\\categories.csv"
+         AllowCRLF "0"
+         LevelNo "0"
+         Occurs "0"
+         PadNulls "0"
+         SignOption "0"
+         SortingOrder "0"
+         ArrayHandling "0"
+         SyncIndicator "0"
+         PadChar ""
+         ColumnReference "description"
+         ExtendedPrecision "1"
+         TaggedSubrec "0"
+         OccursVarying "0"
+         PKeyIsCaseless "0"
+         SCDPurpose "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaFormat"
+         Value "final_delim=end, delim=',', quote=double"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "DiskWriteInc"
+         Value "1048576"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "BufFreeRun"
+         Value "50"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MaxMemBufSize"
+         Value "3145728"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "QueueUpperSize"
+         Value "0"
+      END DSSUBRECORD
+      LeftTextPos "183"
+      TopTextPos "325"
+      LinkMinimised "0"
+   END DSRECORD
+END DSJOB
+BEGIN DSSTAGETYPES
+   BEGIN DSRECORD
+      Identifier "CTransformerStage"
+      DateModified "2024-03-24"
+      TimeModified "12.08.58"
+      OLEType "CStageType"
+      Readonly "1"
+      Category "\\Stage Types\\All\\Processing"
+      ShortDesc "Enter data transformations"
+      Description "Data transformation stage for performing various data transformations"
+      Active "1"
+      RunProg "DSD.StageRun"
+      Vendor "IBM Corporation"
+      Author "IBM Corporation"
+      Version "1.0"
+      Copyright "Licensed Materials - Property of IBM, (C) Copyright IBM Corp. 1999, 2012 All Rights Reserved."
+      MaxInputs "1"
+      MaxOutputs "-1"
+      MinInputs "1,0"
+      MinOutputs "1"
+      SupportsRef "N"
+      NLSUnMapped "0"
+      NLSOwnMapping "0"
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "InputLinkOrder"
+         Value "Primary|!Lookup#"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "OutputLinkOrder"
+         Value "Output#"
+      END DSSUBRECORD
+      Signature "0"
+      SupportsBrowsing "N"
+      SupportsColumnMapping "N"
+      JobType "-1"
+      StageName "Transformer"
+      StageOLEType "CTransformerStage"
+      HiddenOnDefaultPalette "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "PxJoin"
+      DateModified "2024-03-24"
+      TimeModified "12.08.58"
+      OLEType "CStageType"
+      Readonly "1"
+      Category "\\Stage Types\\Parallel\\Processing"
+      ShortDesc "Join two inputs (inner, outer or full join) to create one output "
+      Description "Processing stage for Parallel Extender jobs, which joins two inputs on common key fields to produce a single output. Supported variants: inner join, left outer join, right outer join, full outer join."
+      Active "1"
+      RunProg "#operator"
+      Vendor "IBM Corporation"
+      Author "IBM Corporation"
+      Version "1.0.0"
+      Copyright "Licensed Materials - Property of IBM, (C) Copyright IBM Corp. 2001, 2012 All Rights Reserved."
+      MaxInputs "-1,0"
+      MaxOutputs "1"
+      MinInputs "2,0"
+      MinOutputs "1"
+      SupportsRef "Y"
+      NLSUnMapped "1"
+      NLSOwnMapping "0"
+      PropertyList "CStagePropType"
+      BEGIN DSSUBRECORD
+         Name "operator"
+         Description "Type of join operation to perform."
+         DisplayStyle "0"
+         DisplayCaption "Join Type"
+         Default "Inner\Tinnerjoin"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "5"
+         ValidList "Inner\Tinnerjoin\SLeft Outer\Tleftouterjoin\SRight Outer\Trightouterjoin\SFull Outer\Tfullouterjoin"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "0"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "key"
+         Description "Name of input column you want to join on. Columns with the same name must appear in both input data sets and have compatible data types."
+         DisplayStyle "0"
+         DisplayCaption "Key"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "9"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ci\\cs"
+         Description "Whether this join column is case sensitive or not."
+         DisplayStyle "0"
+         DisplayCaption "Case Sensitive"
+         Default "True\Tcs"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\Tci\STrue\Tcs"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "collation_sequence"
+         Description "Locale to be used for the collation sequence."
+         DisplayStyle "0"
+         DisplayCaption "collation_sequence"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "0"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "1"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "InputLinkOrder"
+         Value "Left|Intermediate#|Right"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingPropagate"
+         Value "1"
+         Conditions "operator!=innerjoin|operator!=leftouterjoin"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingPropagate1"
+         Value "2"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingDrop"
+         Value "Intermediate#;key|DUPLICATES"
+         Conditions "operator=fullouterjoin"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingDrop1"
+         Value "Left;key|Intermediate#;key|DUPLICATES"
+         Conditions "operator=rightouterjoin"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingRename"
+         Value "Left;key=\"leftRec_\"#|Right;key=\"rightRec_\"#"
+         Conditions "operator=fullouterjoin"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTkey"
+         Name "Repeats"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTci\\cs"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTkey"
+         Name "Category"
+         Value "Join Keys"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "NLSLocaleProps"
+         Value ",,,,collation_sequence"
+      END DSSUBRECORD
+      Signature "0"
+      SupportsBrowsing "N"
+      JobType "3"
+      StageName "Join"
+      StageOLEType "CCustomStage"
+      MaxRejectOutputs "0"
+      HiddenOnDefaultPalette "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "PxRemDup"
+      DateModified "2024-03-24"
+      TimeModified "12.08.58"
+      OLEType "CStageType"
+      Readonly "1"
+      Category "\\Stage Types\\Parallel\\Processing"
+      ShortDesc "Eliminate adjacent rows with identical values for the key column(s)"
+      Description "Processing stage for Parallel Extender jobs, which removes adjacent records in the input (sorted) data set and removes any with duplicated key values."
+      Active "1"
+      RunProg "remdup"
+      Vendor "IBM Corporation"
+      Author "IBM Corporation"
+      Version "1.0.0"
+      Copyright "Licensed Materials - Property of IBM, (C) Copyright IBM Corp. 2002, 2012 All Rights Reserved."
+      MaxInputs "1,0"
+      MaxOutputs "1"
+      MinInputs "1,0"
+      MinOutputs "1"
+      SupportsRef "Y"
+      NLSUnMapped "1"
+      NLSOwnMapping "0"
+      PropertyList "CStagePropType"
+      BEGIN DSSUBRECORD
+         Name "keep"
+         Description "Which of the duplicate fields encountered are to be retained."
+         DisplayStyle "0"
+         DisplayCaption "Duplicate To Retain"
+         Default "First\Tfirst"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "5"
+         ValidList "First\Tfirst\SLast\Tlast"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "key"
+         Description "Key column for the operation."
+         DisplayStyle "0"
+         DisplayCaption "Key"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "9"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ci\\cs"
+         Description "Whether this key is case sensitive or not."
+         DisplayStyle "0"
+         DisplayCaption "Case Sensitive"
+         Default "True\Tcs"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\Tci\STrue\Tcs"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ebcdic"
+         Description "Whether or not data should be sorted as if it is EBCDIC."
+         DisplayStyle "0"
+         DisplayCaption "Sort As EBCDIC"
+         Default "False\T "
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\T \STrue\Tebcdic"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "collation_sequence"
+         Description "Locale to be used for the collation sequence."
+         DisplayStyle "0"
+         DisplayCaption "collation_sequence"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "0"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "1"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingPropagate"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTkey"
+         Name "Repeats"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTci\\cs"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTebcdic"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTkey"
+         Name "Category"
+         Value "Keys that define Duplicates"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "NLSLocaleProps"
+         Value ",,,,collation_sequence"
+      END DSSUBRECORD
+      Signature "0"
+      SupportsBrowsing "N"
+      JobType "3"
+      StageName "Remove Duplicates"
+      StageOLEType "CCustomStage"
+      MaxRejectOutputs "0"
+      HiddenOnDefaultPalette "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "PxSequentialFile"
+      DateModified "2024-03-24"
+      TimeModified "12.08.58"
+      OLEType "CStageType"
+      Readonly "1"
+      Category "\\Stage Types\\Parallel\\File"
+      ShortDesc "Sequential file access"
+      Description "Data access stage for reading or writing to one or more sequential files."
+      Active "0"
+      OpenRProg "import"
+      OpenWProg "export"
+      Vendor "IBM Corporation"
+      Author "IBM Corporation"
+      Version "1.0.1"
+      Copyright "Licensed Materials - Property of IBM, (C) Copyright IBM Corp. 2001, 2012 All Rights Reserved."
+      MaxInputs "1,0"
+      MaxOutputs "1"
+      MinInputs "0,0"
+      MinOutputs "0"
+      SupportsRef "Y"
+      NLSUnMapped "0"
+      NLSOwnMapping "1"
+      PropertyList "CStagePropType"
+      BEGIN DSSUBRECORD
+         Name "schema"
+         Description "Schema (hidden property)"
+         DisplayStyle "0"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "1"
+         Type "0"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "1"
+         TransactionGroupable "0"
+         ConvType "4"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "schemafile"
+         Description "Name of a file containing a schema for the data. Setting this property will override any settings on the Format & Columns tabs."
+         DisplayStyle "0"
+         DisplayCaption "Schema File"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "1"
+         Type "4"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file"
+         Description "Name of a file that the incoming data will be written to."
+         DisplayStyle "0"
+         DisplayCaption "File"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "4"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "selection"
+         Description "Whether to specify filenames explicitly or use a file pattern."
+         DisplayStyle "0"
+         DisplayCaption "Read Method"
+         Default "Specific File(s)\Tfile"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "File Pattern\Tpattern\SSpecific File(s)\Tfile"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "-1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "file "
+         Description "Name of a file that data will be read from."
+         DisplayStyle "0"
+         DisplayCaption "File"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "4"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "append\\overwrite"
+         Description "Append to existing files; Overwrite existing files; Create a new file. Setting the environment variable APT_CLOBBER_OUTPUT to True will override the setting of this property to always overwrite"
+         DisplayStyle "0"
+         DisplayCaption "File Update Mode"
+         Default "Overwrite\Toverwrite"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "Append\Tappend\SCreate (Error if exists)\T \SOverwrite\Toverwrite"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "filepattern"
+         Description "Expression resulting in a list of files or any valid Bourne shell expression that generates a list of file names."
+         DisplayStyle "0"
+         DisplayCaption "File Pattern"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "4"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nocleanup"
+         Description "If set true, the stage will delete any partially written data if it fails for any reason."
+         DisplayStyle "0"
+         DisplayCaption "Cleanup On Failure"
+         Default "True\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\Tnocleanup\STrue\T "
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "filter"
+         Description "Name and arguments of a filter program through which the data is passed after being read."
+         DisplayStyle "0"
+         DisplayCaption "Filter"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "1"
+         Type "0"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "keepPartitions"
+         Description "Set True to partition the read data set according to the organization of the input file(s)."
+         DisplayStyle "0"
+         DisplayCaption "Keep File Partitions"
+         Default "False\T "
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "False\T \STrue\TkeepPartitions"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "missingFile"
+         Description "Error to stop job if one of the files mentioned does not exist; OK to skip it. Depends means the default is Error unless the file name has a node name prefix of *, in which case it is OK"
+         DisplayStyle "0"
+         DisplayCaption "Missing File Mode"
+         Default "Depends\T "
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "Depends\T \SError\Terror\SOK\Tokay"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "readers"
+         Description "Number of instances of the file read operator on each processing node (default one per node per file)."
+         DisplayStyle "0"
+         DisplayCaption "Number Of Readers Per Node"
+         Default "1"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "2"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejects"
+         Description "Continue to simply discard any rejected rows; Fail to stop if any row is rejected; Output to send rejected rows down a reject link."
+         DisplayStyle "0"
+         DisplayCaption "Reject Mode"
+         Default "Continue\Tcontinue"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "Continue\Tcontinue\SFail\Tfail\SOutput\Tsave"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportProgress"
+         Description "Enable or disable logging of a progress report at intervals."
+         DisplayStyle "0"
+         DisplayCaption "Report Progress"
+         Default "Yes\Tyes"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "No\Tno\SYes\Tyes"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "charset"
+         Description "Character set used when importing and exporting data."
+         DisplayStyle "0"
+         DisplayCaption "charset"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "0"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "1"
+         TransactionGroupable "0"
+         ConvType "-1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "multinode"
+         Description "Set to Yes to read the file in sections from multiple nodes."
+         DisplayStyle "0"
+         DisplayCaption "Read From Multiple Nodes"
+         Default "No\T "
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "No\T \SYes\Tyes"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "sourceNameField"
+         Description "Adds a VarChar (Unicode for NLS installs) column to the output that contains the name of the file that the record is sourced from. User must add this column definition to the output columns to prevent it from being dropped if runtime column propagation is unchecked."
+         DisplayStyle "0"
+         DisplayCaption "File Name Column"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "10"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "recordNumberField"
+         Description "Adds an unsigned BigInt column with the specified name to the output that contains the row number. User must add this column definition to the output columns to prevent it from being dropped if runtime column propagation is unchecked."
+         DisplayStyle "0"
+         DisplayCaption "Row Number Column"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "10"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "first"
+         Description "Only read the first specified number of rows from each file."
+         DisplayStyle "0"
+         DisplayCaption "Read First Rows"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "2"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "firstLineColumnNames"
+         Description "If set true, the first line of a file contains column names on writing and is ignored on reading."
+         DisplayStyle "0"
+         DisplayCaption "First Line is Column Names"
+         Default "False\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "False\T \STrue\TfirstLineColumnNames"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "stripbom"
+         Description "If set true, the UTF-16 Endianess Byte Order Mark will be dropped."
+         DisplayStyle "0"
+         DisplayCaption "Strip BOM"
+         Default "False\T "
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "5"
+         ValidList "False\T \STrue\Tstripbom"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "rejectReasonField"
+         Description "Adds a column with the given name to the reject link. At runtime this column will contain messages produced by the failed rows."
+         DisplayStyle "0"
+         DisplayCaption "Reject Reason Column"
+         ForInput "0"
+         ForStage "0"
+         ForOutput "1"
+         Type "0"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "collation_sequence"
+         Description "Locale to be used for the collation sequence."
+         DisplayStyle "0"
+         DisplayCaption "collation_sequence"
+         ForInput "0"
+         ForStage "1"
+         ForOutput "0"
+         Type "0"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "1"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "writemethod"
+         Description "Whether to explicitly specify filenames or generate multiple files with naming logic based on further options."
+         DisplayStyle "0"
+         DisplayCaption "Write Method"
+         Default "Specific File(s)\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "Specific File(s)\T \SGenerate Multiple Files\Tfilepattern"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "filepath"
+         Description "Root string for generation of target files. This can be a fully qualified path or just the root string of the filename in which case the files will be created in the current working directory."
+         DisplayStyle "0"
+         DisplayCaption "Root File String"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "4"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "sequential"
+         Description "Set to True to force sequential mode running (default is to run an instance per partition, each writing to a different file)."
+         DisplayStyle "0"
+         DisplayCaption "Force Sequential"
+         Default "False\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\T \STrue\Tsequential"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "excludePart"
+         Description "By default, a partition string is added to the filename to make it unique. Setting this property to True stops this. An error will occur if other factors affecting filename generation do not result in a unique filename."
+         DisplayStyle "0"
+         DisplayCaption "Exclude Partition String"
+         Default "False\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\T \STrue\TexcludePart"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "key"
+         Description "Key column to be used to trigger generation of new target files."
+         DisplayStyle "0"
+         DisplayCaption "Key"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "9"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "include"
+         Description "Whether the value of this key is to be used as part of the filename."
+         DisplayStyle "0"
+         DisplayCaption "Use Value In Filename"
+         Default "False\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\T \STrue\Tinclude"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ci\\cs"
+         Description "Whether this key is case sensitive or not."
+         DisplayStyle "0"
+         DisplayCaption "Case Sensitive"
+         Default "True\Tcs"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "True\Tcs\SFalse\Tci"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "asc\\desc"
+         Description "Sort in ascending or descending order."
+         DisplayStyle "0"
+         DisplayCaption "Sort Order"
+         Default "Ascending\Tasc"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "Ascending\Tasc\SDescending\Tdesc"
+         Width "0"
+         Required "1"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "nulls"
+         Description "Whether fields containing null values appear first or last."
+         DisplayStyle "0"
+         DisplayCaption "Nulls Position"
+         Default "First\Tfirst"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "First\Tfirst\SLast\Tlast"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ebcdic"
+         Description "Whether or not data should be sorted as if it is EBCDIC."
+         DisplayStyle "0"
+         DisplayCaption "Sort As EBCDIC"
+         Default "False\T "
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "5"
+         ValidList "False\T \STrue\Tebcdic"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "2"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "maxFileSize"
+         Description "Maximum file size in megabytes. Hitting this limit will trigger generation of a new file."
+         DisplayStyle "0"
+         DisplayCaption "Maximum File Size"
+         ForInput "1"
+         ForStage "0"
+         ForOutput "0"
+         Type "3"
+         Width "0"
+         Required "0"
+         Locked "0"
+         Hidden "0"
+         TransactionGroupable "0"
+         ConvType "1"
+         Repeating "0"
+         QuoteString "0"
+         ViewData "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode"
+         Value "par"
+         Conditions "selection=file|file !=|file !="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode1"
+         Value "par"
+         Conditions "selection=file|readers!=|readers!=1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode2"
+         Value "par"
+         Conditions "selection=pattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode3"
+         Value "par"
+         Conditions "multinode=yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode4"
+         Value "par"
+         Conditions "writemethod!=filepattern|file!=|file!="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode5"
+         Value "par"
+         Conditions "writemethod=filepattern|sequential!=sequential"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Execmode6"
+         Value "seq"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Preserve"
+         Value "0"
+         Conditions "keepPartitions!=keepPartitions"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "Preserve1"
+         Value "1"
+         Conditions "keepPartitions=keepPartitions"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "AllowRejects"
+         Conditions "rejects=save"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "RejectSchema"
+         Value "record(rejected:raw;)"
+         Conditions "reportProgress!="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "MappingRejectAdd"
+         Value "rejectReasonField:ustring"
+         Conditions "rejectReasonField!="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "NLSMapProps"
+         Value "charset"
+         Conditions "schemafile="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "NLSLocaleProps"
+         Value ",,,,collation_sequence"
+         Conditions "writemethod=filepattern|key!="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "TargetViewData"
+         Value "0"
+         Conditions "writemethod=filepattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTschema"
+         Name "Conditions"
+         Conditions "schemafile="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile"
+         Name "Repeats"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile "
+         Name "Repeats"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile "
+         Name "Conditions"
+         Conditions "selection=file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfilepattern"
+         Name "Conditions"
+         Conditions "selection=pattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTmissingFile"
+         Name "Conditions"
+         Conditions "selection=file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfilter"
+         Name "Conditions"
+         Conditions "selection!=pattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTreaders"
+         Name "Conditions"
+         Conditions "selection=file|multinode!=yes"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTmultinode"
+         Name "Conditions"
+         Conditions "selection=file"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTselection"
+         Name "Category"
+         Value "Source"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile "
+         Name "Category"
+         Value "Source"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfilepattern"
+         Name "Category"
+         Value "Source"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile"
+         Name "Category"
+         Value "Target"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTappend\\overwrite"
+         Name "Category"
+         Value "Target"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile"
+         Name "TargetViewData"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "SchemaNotRequiredCols"
+         Value "sourceNameField|recordNumberField"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfirst"
+         Name "Conditions"
+         Conditions "selection=file|multinode!=yes|readers="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTreportProgress"
+         Name "Conditions"
+         Conditions "filter="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfirstLineColumnNames"
+         Name "Conditions"
+         Conditions "filter=|multinode!=yes|readers="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfilepattern"
+         Name "Repeats"
+         Value "1"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTcollation_sequence"
+         Name "Conditions"
+         Conditions "writemethod=filepattern|key!="
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTwritemethod"
+         Name "Category"
+         Value "Target"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfile"
+         Name "Conditions"
+         Conditions "writemethod!=filepattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfilepath"
+         Name "Conditions"
+         Conditions "writemethod=filepattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTfilepath"
+         Name "Parents"
+         Value "writemethod"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTsequential"
+         Name "Conditions"
+         Conditions "writemethod=filepattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTsequential"
+         Name "Parents"
+         Value "writemethod"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTexcludePart"
+         Name "Parents"
+         Value "writemethod"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTexcludePart"
+         Name "Conditions"
+         Conditions "writemethod=filepattern|sequential!=sequential|key!=|include=include"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTkey"
+         Name "Conditions"
+         Conditions "writemethod=filepattern"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTkey"
+         Name "Parents"
+         Value "writemethod"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTinclude"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTci\\cs"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTasc\\desc"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTnulls"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTebcdic"
+         Name "Parents"
+         Value "key"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Owner "APTmaxFileSize"
+         Name "Conditions"
+         Conditions "writemethod=filepattern"
+      END DSSUBRECORD
+      Signature "0"
+      SupportsBrowsing "Y,Y,N,N"
+      SupportsColumnMapping "Y"
+      JobType "3"
+      StageName "Sequential File"
+      StageOLEType "CCustomStage"
+      SupportsTxnGrouping "N"
+      MaxRejectOutputs "1"
+      HiddenOnDefaultPalette "0"
+   END DSRECORD
+END DSSTAGETYPES
+BEGIN DSTABLEDEFS
+   BEGIN DSRECORD
+      Identifier "Sequential\\data\\categories.csv"
+      DateModified "2024-03-29"
+      TimeModified "03.55.30"
+      OLEType "CMetaTable"
+      Readonly "0"
+      Category "\\Table Definitions\\Sequential\\data"
+      Description "Imported from: C:\\data\\categories.csv (Map=MS1252) (as seen from IBMDSSERVER) - 3/29/2024 3:55:14 AM"
+      Version "9"
+      NLSMapName "MS1252"
+      QuoteChar "000"
+      Multivalued "0"
+      Columns "CMetaColumn"
+      BEGIN DSSUBRECORD
+         Name "categoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "categoryName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "description"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "60"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      SEQ-Delimiter ","
+      SEQ-QuoteChar "\""
+      SEQ-ColHeaders "1"
+      SEQ-FixedWidth "0"
+      SEQ-ColSpace "0"
+      SEQ-OmitNewLine "0"
+      AllowColumnMapping "0"
+      Locator "TableType=\"Sequential\"|Computer=\"ibmdsserver\"|SoftwareProduct=\"FileSystem\"|DataStore(Directory)=\"C:\\data\"|DataSchema(File)=\"categories.csv\"|DataCollection=\"categories.csv\""
+      PadChar "#"
+      APTRecordProp "record_delim='\\n', delim=',', final_delim=end, quote=double, padchar='#'"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "Sequential\\data\\Customers.csv"
+      DateModified "2024-03-29"
+      TimeModified "03.56.42"
+      OLEType "CMetaTable"
+      Readonly "0"
+      Category "\\Table Definitions\\Sequential\\data"
+      Description "Imported from: C:\\data\\Customers.csv (Map=MS1252) (as seen from IBMDSSERVER) - 3/29/2024 3:56:38 AM"
+      Version "9"
+      NLSMapName "MS1252"
+      QuoteChar "000"
+      Multivalued "0"
+      Columns "CMetaColumn"
+      BEGIN DSSUBRECORD
+         Name "customerID"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "18"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "contactTitle"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "20"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "companyName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "34"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      SEQ-Delimiter ","
+      SEQ-QuoteChar "\""
+      SEQ-ColHeaders "1"
+      SEQ-FixedWidth "0"
+      SEQ-ColSpace "0"
+      SEQ-OmitNewLine "0"
+      AllowColumnMapping "0"
+      Locator "TableType=\"Sequential\"|Computer=\"ibmdsserver\"|SoftwareProduct=\"FileSystem\"|DataStore(Directory)=\"C:\\data\"|DataSchema(File)=\"Customers.csv\"|DataCollection=\"Customers.csv\""
+      PadChar "#"
+      APTRecordProp "record_delim='\\n', delim=',', final_delim=end, quote=double, padchar='#'"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "Sequential\\data\\DimTerritory.csv"
+      DateModified "2024-03-29"
+      TimeModified "04.05.41"
+      OLEType "CMetaTable"
+      Readonly "0"
+      Category "\\Table Definitions\\Sequential\\data"
+      Description "Imported from: C:\\data\\DimTerritory.csv (Map=MS1252) (as seen from IBMDSSERVER) - 3/29/2024 4:05:10 AM"
+      Version "9"
+      NLSMapName "MS1252"
+      QuoteChar "000"
+      Multivalued "0"
+      Columns "CMetaColumn"
+      BEGIN DSSUBRECORD
+         Name "TerritoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "7"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "11"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      SEQ-Delimiter ","
+      SEQ-QuoteChar "\""
+      SEQ-ColHeaders "1"
+      SEQ-FixedWidth "0"
+      SEQ-ColSpace "0"
+      SEQ-OmitNewLine "0"
+      AllowColumnMapping "0"
+      Locator "TableType=\"Sequential\"|Computer=\"ibmdsserver\"|SoftwareProduct=\"FileSystem\"|DataStore(Directory)=\"C:\\data\"|DataSchema(File)=\"DimTerritory.csv\"|DataCollection=\"DimTerritory.csv\""
+      PadChar "#"
+      APTRecordProp "record_delim='\\n', delim=',', final_delim=end, quote=double, padchar='#'"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "Sequential\\data\\employees.csv"
+      DateModified "2024-03-29"
+      TimeModified "03.56.50"
+      OLEType "CMetaTable"
+      Readonly "0"
+      Category "\\Table Definitions\\Sequential\\data"
+      Description "Imported from: C:\\data\\employees.csv (Map=MS1252) (as seen from IBMDSSERVER) - 3/29/2024 3:56:46 AM"
+      Version "9"
+      NLSMapName "MS1252"
+      QuoteChar "000"
+      Multivalued "0"
+      Columns "CMetaColumn"
+      BEGIN DSSUBRECORD
+         Name "employeeID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "employeeName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "title"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "20"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "city"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "8"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "country"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "3"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "reportsTo"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      SEQ-Delimiter ","
+      SEQ-QuoteChar "\""
+      SEQ-ColHeaders "1"
+      SEQ-FixedWidth "0"
+      SEQ-ColSpace "0"
+      SEQ-OmitNewLine "0"
+      AllowColumnMapping "0"
+      Locator "TableType=\"Sequential\"|Computer=\"ibmdsserver\"|SoftwareProduct=\"FileSystem\"|DataStore(Directory)=\"C:\\data\"|DataSchema(File)=\"employees.csv\"|DataCollection=\"employees.csv\""
+      PadChar "#"
+      APTRecordProp "record_delim='\\n', delim=',', final_delim=end, quote=double, padchar='#'"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "Sequential\\data\\products.csv"
+      DateModified "2024-03-29"
+      TimeModified "03.57.20"
+      OLEType "CMetaTable"
+      Readonly "0"
+      Category "\\Table Definitions\\Sequential\\data"
+      Description "Imported from: C:\\data\\products.csv (Map=MS1252) (as seen from IBMDSSERVER) - 3/29/2024 3:57:16 AM"
+      Version "9"
+      NLSMapName "MS1252"
+      QuoteChar "000"
+      Multivalued "0"
+      Columns "CMetaColumn"
+      BEGIN DSSUBRECORD
+         Name "productID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "productName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "31"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "quantityPerUnit"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "19"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "unitPrice"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "5"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "discontinued"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "categoryID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      SEQ-Delimiter ","
+      SEQ-QuoteChar "\""
+      SEQ-ColHeaders "1"
+      SEQ-FixedWidth "0"
+      SEQ-ColSpace "0"
+      SEQ-OmitNewLine "0"
+      AllowColumnMapping "0"
+      Locator "TableType=\"Sequential\"|Computer=\"ibmdsserver\"|SoftwareProduct=\"FileSystem\"|DataStore(Directory)=\"C:\\data\"|DataSchema(File)=\"products.csv\"|DataCollection=\"products.csv\""
+      PadChar "#"
+      APTRecordProp "record_delim='\\n', delim=',', final_delim=end, quote=double, padchar='#'"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "Sequential\\data\\shippers.csv"
+      DateModified "2024-03-29"
+      TimeModified "03.57.29"
+      OLEType "CMetaTable"
+      Readonly "0"
+      Category "\\Table Definitions\\Sequential\\data"
+      Description "Imported from: C:\\data\\shippers.csv (Map=MS1252) (as seen from IBMDSSERVER) - 3/29/2024 3:57:25 AM"
+      Version "9"
+      NLSMapName "MS1252"
+      QuoteChar "000"
+      Multivalued "0"
+      Columns "CMetaColumn"
+      BEGIN DSSUBRECORD
+         Name "shipperID"
+         SqlType "4"
+         Precision "10"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "1"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         APTFieldProp "quote=none"
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "companyName"
+         SqlType "12"
+         Precision "255"
+         Scale "0"
+         Nullable "0"
+         KeyPosition "0"
+         DisplaySize "16"
+         LevelNo "0"
+         Occurs "0"
+         SignOption "0"
+         SCDPurpose "0"
+         SyncIndicator "0"
+         PadChar ""
+         ExtendedPrecision "0"
+         TaggedSubrec "0"
+         OccursVarying "0"
+      END DSSUBRECORD
+      SEQ-Delimiter ","
+      SEQ-QuoteChar "\""
+      SEQ-ColHeaders "1"
+      SEQ-FixedWidth "0"
+      SEQ-ColSpace "0"
+      SEQ-OmitNewLine "0"
+      AllowColumnMapping "0"
+      Locator "TableType=\"Sequential\"|Computer=\"ibmdsserver\"|SoftwareProduct=\"FileSystem\"|DataStore(Directory)=\"C:\\data\"|DataSchema(File)=\"shippers.csv\"|DataCollection=\"shippers.csv\""
+      PadChar "#"
+      APTRecordProp "record_delim='\\n', delim=',', final_delim=end, quote=double, padchar='#'"
+   END DSRECORD
+END DSTABLEDEFS

@@ -1,8 +1,5 @@
 # Data Integration & ETL "DataStage" for TradeXPress
 
-## Overview
-This project implements data engineering methodologies and tools to integrate data from various sources for TradeXPress, a global trade company. The project aims to create an efficient schema for querying the integrated data and to support the Business Intelligence (BI) team in gaining actionable insights from the data.
-
 ## Table of Contents
 1. [Overview](#overview)
 2. [Database Design](#database-design)
@@ -10,6 +7,12 @@ This project implements data engineering methodologies and tools to integrate da
 4. [ETL, Data Warehouse, and Modeling](#etl-data-warehouse-and-modeling)
 5. [Analysis and Reporting](#analysis-and-reporting)
 6. [Conclusion](#conclusion)
+
+
+## Overview
+This project implements data engineering methodologies and tools to integrate data from various sources for TradeXPress, a global trade company. The project aims to create an efficient schema for querying the integrated data and to support the Business Intelligence (BI) team in gaining actionable insights from the data.
+
+
 
 ## Database Design
 The database design includes tables for orders, customers, employees, products, categories, shippers, and shipping details. Each table has specific columns to store relevant information. Refer to the Database Design section in the project documentation for details.

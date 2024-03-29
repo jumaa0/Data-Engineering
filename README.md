@@ -59,6 +59,7 @@ The project has successfully integrated data from flat files, transformed it usi
 ## Credits
 - Developed by Ahmed Jumaa
 - Contact: ahmed.mmjumaa@gmail.com
-
+## Dashboard
+![Tableau](Tableau_dashboard/tableau_dashboard.png)
 ## Documentaion
 [Project Documentation Overview](docs/Documentation.pdf): Overview of the project, its objectives, and scope.

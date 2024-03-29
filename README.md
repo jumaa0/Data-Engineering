@@ -29,6 +29,14 @@ Data insertion involves extracting data from source files and inserting it into 
 ## ETL, Data Warehouse, and Modeling
 The ETL process uses IBM DataStage to transform data, drive dimensions, and derive transactional and periodic fact tables. It includes data cleansing, mapping, enrichment, and maintaining data quality. Refer to the ETL, Data Warehouse, and Modeling section in the project documentation for details.
 
+### Diminsional Modelling
+![DWH](DWH/Star_schema.png)
+
+### ETL
+![DIM](data_integration/dims_integration.png)
+
+![FACT](data_integration/facts_integration.png)
+
 ## Analysis and Reporting
 Tableau Public is used for analysis and reporting. A Tableau dashboard provides an interactive overview of the business's performance, including sales trends, product performance, key customer identification, shipping costs and delays, employees' performance, and market analysis. Refer to the Analysis and Reporting section in the project documentation for details.
 
@@ -46,8 +54,8 @@ The project has successfully integrated data from flat files, transformed it usi
 3. Refer to the project documentation for detailed instructions on using the project.
 
 ## Credits
-- Developed by [Your Name]
-- Contact: [Your Email]
+- Developed by [Ahmed Jumaa]
+- Contact: [ahmed.mmjumaa@gmail.com]
 
-## License
-This project is licensed under the [License Name] License - see the [LICENSE.md](LICENSE.md) file for details.
+## Documentaion
+[Project Documentation Overview](docs/Documentation.pdf): Overview of the project, its objectives, and scope.

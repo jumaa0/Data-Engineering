@@ -54,8 +54,8 @@ The project has successfully integrated data from flat files, transformed it usi
 3. Refer to the project documentation for detailed instructions on using the project.
 
 ## Credits
-- Developed by [Ahmed Jumaa]
-- Contact: [ahmed.mmjumaa@gmail.com]
+- Developed by Ahmed Jumaa
+- Contact: ahmed.mmjumaa@gmail.com
 
 ## Documentaion
 [Project Documentation Overview](docs/Documentation.pdf): Overview of the project, its objectives, and scope.
